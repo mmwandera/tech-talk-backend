@@ -18,6 +18,7 @@ class User(db.Model):
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
+    profile_photo = db.Column(db.String)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Relationship: User can follow other users
@@ -50,7 +51,7 @@ class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    image_url = db.Column(db.String(200))
+    image_url = db.Column(db.String)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
