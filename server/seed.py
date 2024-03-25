@@ -21,7 +21,7 @@ fake = Faker()
 # Seed Users
 print("👤 Seeding users...")
 users_data = [
-    {"username": fake.user_name(), "email": fake.email()} for _ in range(10)
+    {"username": fake.user_name(), "email": fake.email(), "profile_photo": fake.image_url()} for _ in range(10)
 ]
 
 for user_info in users_data:
