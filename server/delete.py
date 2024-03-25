@@ -1,5 +1,5 @@
 from app import app, db
-from models import User, BlogPost, Comment, Like, followers
+from models import User, Blog, Comment, Like, followers
 
 def delete_data():
     print("🗑️ Deleting existing data...")
@@ -7,7 +7,7 @@ def delete_data():
         try:
             # Delete all data from tables
             db.session.query(User).delete()
-            db.session.query(BlogPost).delete()
+            db.session.query(Blog).delete()
             db.session.query(Comment).delete()
             db.session.query(Like).delete()
 

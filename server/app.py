@@ -1,6 +1,6 @@
 # app.py
 from flask import Flask
-from models import db, User, BlogPost, Comment, Like
+from models import db, User, Blog, Comment, Like
 from flask_migrate import Migrate
 
 app = Flask(__name__)

@@ -1,6 +1,6 @@
 from random import randint, sample
 from faker import Faker
-from models import db, User, BlogPost, Comment, Like
+from models import db, User, Blog, Comment, Like
 from app import app
 
 app.app_context().push()
@@ -16,15 +16,17 @@ print("✅ Existing data deleted.")
 # Generating seed data
 print("🌱 Generating seed data...")
 
+fake = Faker()
+
 # Seed Users
 print("👤 Seeding users...")
-fake = Faker()
 users_data = [
-    {"username": fake.user_name(), "email": fake.email(), "password": "password"} for _ in range(10)
+    {"username": fake.user_name(), "email": fake.email()} for _ in range(10)
 ]
 
 for user_info in users_data:
     user = User(**user_info)
+    user.set_password("password")
     db.session.add(user)
 
 # Commit changes to create users first
@@ -40,35 +42,36 @@ for user in users:
 # Commit changes to create followers and following relationships
 db.session.commit()
 
-# Seed BlogPosts
-print("📝 Seeding blog posts...")
-blog_posts_data = [
-    {"title": fake.sentence(), "content": fake.paragraph(), "user_id": randint(1, len(users))} for _ in range(20)
+# Seed Blogs
+print("📝 Seeding blogs...")
+blogs_data = [
+    {"title": fake.sentence(), "content": fake.paragraph(), "image_url": fake.image_url(), "user_id": randint(1, len(users))}
+    for _ in range(20)
 ]
 
-for post_info in blog_posts_data:
-    post = BlogPost(**post_info)
-    db.session.add(post)
-
-# Seed Likes
-print("❤️ Seeding likes...")
-likes_data = [
-    {"user_id": randint(1, len(users)), "post_id": randint(1, 20)} for _ in range(50)
-]
-
-for like_info in likes_data:
-    like = Like(**like_info)
-    db.session.add(like)
+for blog_info in blogs_data:
+    blog = Blog(**blog_info)
+    db.session.add(blog)
 
 # Seed Comments
 print("💬 Seeding comments...")
 comments_data = [
-    {"content": fake.text(), "user_id": randint(1, len(users)), "post_id": randint(1, 20)} for _ in range(50)
+    {"content": fake.text(), "user_id": randint(1, len(users)), "blog_id": randint(1, 20)} for _ in range(50)
 ]
 
 for comment_info in comments_data:
     comment = Comment(**comment_info)
     db.session.add(comment)
+
+# Seed Likes
+print("❤️ Seeding likes...")
+likes_data = [
+    {"user_id": randint(1, len(users)), "blog_id": randint(1, 20)} for _ in range(50)
+]
+
+for like_info in likes_data:
+    like = Like(**like_info)
+    db.session.add(like)
 
 # Commit changes
 print("💾 Saving changes to the database...")
