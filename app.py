@@ -1,4 +1,5 @@
 from flask import Flask,jsonify, request, session, redirect, url_for
+from flask_cors import CORS
 from models import db, User, Blog, Comment, Like
 from flask_migrate import Migrate
 
@@ -8,6 +9,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///techtalk.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'mysecretkey'
 
+CORS(app)
 migrate = Migrate(app, db)
 db.init_app(app)
 
