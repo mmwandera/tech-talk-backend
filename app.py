@@ -31,15 +31,7 @@ def signup():
     new_user.set_password(password)
     db.session.add(new_user)
     db.session.commit()
-    # return jsonify({'message': 'User created successfully'}), 201
-
-    response_data = {
-        'message': 'User created successfully',
-        'redirect_url': url_for('login') #Redirect to login page (Client Side routing)
-    }
-    
-    # Return JSON response
-    return jsonify(response_data), 201
+    return jsonify({'message': 'User created successfully'}), 201
 
 # Route for user log in
 @app.route('/login', methods=['POST'])
