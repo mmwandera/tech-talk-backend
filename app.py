@@ -69,22 +69,10 @@ def get_all_blogs():
         'author': {
             'id': blog.author.id,
             'username': blog.author.username
-        }
+        },
+        'created_at': blog.created_at.strftime("%Y-%m-%d %H:%M:%S")
     } for blog in blogs]
     return jsonify(serialized_blogs), 200
-
-# Route for getting other users
-@app.route('/users', methods=['GET'])
-def get_other_users():
-    logged_in_user_id = request.args.get('user_id')  # Get the logged-in user's ID from the query parameters
-    # Query other users excluding the logged-in user
-    other_users = User.query.filter(User.id != logged_in_user_id).all()    # Serialize other users to JSON
-    serialized_users = [{
-        'id': user.id,
-        'username': user.username,
-        'profile_photo': user.profile_photo,  # Add profile photo URL here
-    } for user in other_users]
-    return jsonify(serialized_users), 200
 
 @app.route('/blogs/<int:user_id>', methods=['GET'])
 def get_user_blogs(user_id):
@@ -125,6 +113,40 @@ def post_blog():
         print(str(e))
         return jsonify(error='Failed to post blog'), 500
 
+@app.route('/delete-blog/<int:blog_id>', methods=['DELETE'])
+def delete_blog(blog_id):
+    # Find the blog by its ID
+    blog = Blog.query.get(blog_id)
+    
+    # Check if the blog exists
+    if blog:
+        # Delete the blog from the database
+        db.session.delete(blog)
+        db.session.commit()
+        return jsonify({"message": "Blog deleted successfully"}), 200
+    else:
+        return jsonify({"error": "Blog not found"}), 404
+
+# Route for getting details of a specific blog
+@app.route('/blog-details/<int:blog_id>', methods=['GET'])
+def get_blog_details(blog_id):
+    blog = Blog.query.get(blog_id)
+    if blog:
+        # Serialize the blog details to JSON
+        serialized_blog = {
+            'id': blog.id,
+            'title': blog.title,
+            'content': blog.content,
+            'image_url': blog.image_url,
+            'author': {
+                'id': blog.author.id,
+                'username': blog.author.username
+            },
+            'created_at': blog.created_at.strftime("%Y-%m-%d %H:%M:%S")
+        }
+        return jsonify(serialized_blog), 200
+    else:
+        return jsonify({'error': 'Blog not found'}), 404
 
 if __name__ == '__main__':
     app.run(port=3000, debug=True)
