@@ -18,8 +18,10 @@ db.init_app(app)
 def signup():
     data = request.json
     username = data.get('username')
-    email = data.get('email')
     password = data.get('password')
+
+    # Append "@gmail.com" to the username to create the email
+    email = f"{username}@gmail.com"
 
     # Check if the username or email already exists
     existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
@@ -31,15 +33,15 @@ def signup():
     new_user.set_password(password)
     db.session.add(new_user)
     db.session.commit()
-    # return jsonify({'message': 'User created successfully'}), 201
 
     response_data = {
         'message': 'User created successfully',
-        'redirect_url': url_for('login') #Redirect to login page (Client Side routing)
+        'redirect_url': url_for('login')  # Redirect to login page (Client Side routing)
     }
-    
-    # Return JSON response
+
     return jsonify(response_data), 201
+
+
 
 # Route for user log in
 @app.route('/login', methods=['POST'])
