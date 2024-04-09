@@ -42,7 +42,6 @@ def signup():
     return jsonify(response_data), 201
 
 # Route for user log in
-# Route for user log in
 @app.route('/login', methods=['POST'])
 def login():
     data = request.json
@@ -56,14 +55,6 @@ def login():
 
     # Return the user ID in the response
     return jsonify({'message': 'Logged in successfully', 'user_id': user.id}), 200
-
-
-# Route for user log out
-@app.route('/logout', methods=['GET'])
-def logout():
-    # Remove the user ID from the session to log out the user
-    session.pop('user_id', None)
-    return jsonify({'message': 'Logged out successfully'}), 200
 
 # Route for getting all blogs
 @app.route('/blogs', methods=['GET'])
@@ -82,6 +73,18 @@ def get_all_blogs():
     } for blog in blogs]
     return jsonify(serialized_blogs), 200
 
+# Route for getting other users
+@app.route('/users', methods=['GET'])
+def get_other_users():
+    logged_in_user_id = request.args.get('user_id')  # Get the logged-in user's ID from the query parameters
+    # Query other users excluding the logged-in user
+    other_users = User.query.filter(User.id != logged_in_user_id).all()    # Serialize other users to JSON
+    serialized_users = [{
+        'id': user.id,
+        'username': user.username,
+        'profile_photo': user.profile_photo,  # Add profile photo URL here
+    } for user in other_users]
+    return jsonify(serialized_users), 200
 
 if __name__ == '__main__':
     app.run(port=3000, debug=True)
