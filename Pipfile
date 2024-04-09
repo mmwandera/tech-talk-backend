@@ -11,6 +11,8 @@ bcrypt = "*"
 faker = "*"
 ipdb = "*"
 flask-cors = "*"
+flask-uploads = "*"
+werkzeug = "*"
 
 [dev-packages]
 

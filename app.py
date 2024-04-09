@@ -86,5 +86,45 @@ def get_other_users():
     } for user in other_users]
     return jsonify(serialized_users), 200
 
+@app.route('/blogs/<int:user_id>', methods=['GET'])
+def get_user_blogs(user_id):
+    # Query blogs associated with the specified user ID
+    blogs = Blog.query.filter_by(user_id=user_id).all()
+    # Serialize blogs to JSON
+    serialized_blogs = [{
+        'id': blog.id,
+        'title': blog.title,
+        'content': blog.content,
+        'image_url': blog.image_url,
+        'author': {
+            'id': blog.author.id,
+            'username': blog.author.username
+        }
+    } for blog in blogs]
+    return jsonify(serialized_blogs), 200
+
+@app.route('/post-blog', methods=['POST'])
+def post_blog():
+    data = request.json
+
+    # Get data from request body
+    title = data.get('title')
+    content = data.get('content')
+    image_url = data.get('image_url')
+    user_id = data.get('user_id')  # Assuming you send user_id along with the request
+
+    # Create a new blog
+    new_blog = Blog(title=title, content=content, image_url=image_url, user_id=user_id)
+
+    try:
+        # Add new blog to the database
+        db.session.add(new_blog)
+        db.session.commit()
+        return jsonify(message='Blog posted successfully'), 201
+    except Exception as e:
+        print(str(e))
+        return jsonify(error='Failed to post blog'), 500
+
+
 if __name__ == '__main__':
     app.run(port=3000, debug=True)
